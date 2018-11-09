@@ -1,0 +1,73 @@
+{% extends "base.html"%}
+
+{% load static %}
+{% block content %}
+    {% block question %}{% endblock %}
+    {% block objectlist %}
+    <div class="container" style="margin-top: 3%;">
+        {% block typetitle %}
+        {% endblock %}
+        {% for object in objects %}
+            <div class="row" style="border: 2px solid black; margin-top:2%; height: 25vh;">
+                <div class="col-1 ml-5 mt-3">
+                    <div class="row"><img src="{% static "img/House.png" %}" style="width: 50px; height: 50px" alt="Avatar"></div>
+                    <div class="row mt-5">
+                        <button type="button" class="btn btn-success btn-md" style="width:80%">
+                            <span class="glyphicon glyphicon-star"></span> 123
+                        </button>
+                    </div>
+                    <div class="row mt-1">
+                        <button type="button" class="btn btn-danger btn-md" style="width:80%">
+                            <span class="glyphicon glyphicon-star-empty"></span> 45
+                        </button>
+                    </div>
+                </div>
+                <div class="col-10 pr-0">                  
+                    <a class="btn btn-link pl-0" href="{% url 'question' object.id %}"><h2>{{ object.title }}</h2></a>
+                    <div class="mytext">
+                        {{ object.text }}
+                    </div>
+                    <div class="row">
+                        {% block objectproperties%}
+                        <div class="col-3 pl-0"><a class="btn btn-link" href="{% url 'question' object.id %}">answers(3)</a></div>
+                        <div class="col-9">Tags: 
+                            {% for tag in tags %}
+                            <a class="btn btn-link pr-0" href="{% url 'tag' tag %}">{{ tag }}</a>
+                            {% endfor %}
+                        </div>
+                        {% endblock %}                   
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <nav aria-label="objects" class="mt-5">
+            <ul class="pagination">
+                {% if objects.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ objects.previous_page_number }}">previous</a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ objects.number }}">{{ objects.number }}</a>
+                </li>
+
+                {% if objects.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ objects.next_page_number }}">next</a>
+                    </li>
+                    <li>
+                        <a class="page-link" href="?page={{ objects.paginator.num_pages }}">{{ objects.paginator.num_pages }}</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <div class="row" style="height: 5vh"></div>
+    </div>
+    {% endblock %}
+    {% block answer%}{% endblock %}
+{% endblock %}

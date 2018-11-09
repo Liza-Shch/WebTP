@@ -1,0 +1,38 @@
+{% extends "ask.html" %}
+
+{% load static %}
+{% block formtitle %}
+    <h2>LogIn</h2>
+{% endblock %}
+{% block form %}
+    {% for item in form_items %}
+    <form class="form-inline">
+            <div class="form-group" style="width:100%">
+                <div class="row mt-3" style="width:inherit">
+                <div class="col-3">
+                    <label for={{ item.label }}><h5 class="text-right" style="width: 100%">{{ item.label }}</h5></label>
+                </div>
+                <div class="col-9">
+                    <input type={{ item.type_item }} class="form-control" id={{ item.label }} placeholder="{{ item.label }}..." required style="width: 100%" maxlength="40">
+                    <div class="invalid-feedback" style="display:block">
+                        Please enter a {{ item.label }}
+                    </div>
+                </div>                        
+            </div>
+            </div>
+    </form>
+    {% endfor %}
+    {% block photo %}{% endblock %}
+    <div class="row" style="width:100%">
+        <div class="col-3"></div>
+        {% block button_send %}
+            <div class="col-9"><button class="btn btn-primary mt-5" type="submit">LogIn</button></div>
+        {% endblock %}
+    </div>
+    {% block link_signup %}
+    <div class="row" style="width:100%">
+        <div class="col-3"></div>
+        <div class="col-9 ml-0 pl-0"><a class="btn btn-link mt-3" href="{% url 'signup' %}">create new account</a></div>
+    </div>
+    {% endblock %}
+{% endblock %}

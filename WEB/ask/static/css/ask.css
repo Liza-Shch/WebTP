@@ -1,0 +1,42 @@
+html, body {
+    height: 100vh;
+    font-size: 16px;
+}
+header, nav, section, article, aside, footer {
+	display: block;
+}
+
+:root{
+    --height-header:8vh;
+    --height-footer:3vh;
+}
+.wrapper {
+    height: inherit;
+    position: relative;
+}
+  
+header {
+    height:var(--height1);
+}
+  
+main {
+    position: relative;
+    height:calc(100vh - (var(--height-header) + var(--height-footer)) );
+    margin-top: var(--height-header);
+}
+
+footer {
+    height: var(--height-footer);
+    position: fixed;
+    bottom: 0;
+    background-color: rgb(13, 63, 40);
+    text-align: right;
+    font-style: italic;
+    color: rgb(255, 255, 255);
+}
+
+.mytext {
+    overflow: hidden;
+    height: 50%;
+    text-align: justify;
+}

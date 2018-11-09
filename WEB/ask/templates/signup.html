@@ -1,0 +1,28 @@
+{% extends "login.html" %}
+
+{% load static %}
+{% block formtitle%}
+    <h2>SignUp</h2>
+{% endblock %}
+{% block photo %}
+    {% block avatar %}{% endblock %}
+    <form class="form-inline">
+        <div class="form-group" style="width:100%">
+            <div class="row mt-3" style="width:inherit">
+            <div class="col-3">
+                <label for="photo"><h5 class="text-right" style="width: 100%">Upload avatar</h5></label>
+            </div>
+            <div class="col-9">
+                <input type="file" class="filestyle">
+                <div class="invalid-feedback" style="display:block">
+                    Please load a file
+                </div>
+            </div>                        
+        </div>
+        </div>
+    </form>
+{% endblock %}
+{% block button_send %}
+    <div class="col-9"><button class="btn btn-primary mt-5" type="submit">SignUp</button></div>
+{% endblock %}
+{% block link_signup %}{% endblock %}
