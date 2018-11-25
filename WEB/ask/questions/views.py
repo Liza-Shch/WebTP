@@ -1,5 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+#from questions.forms import LoginForm, QuestionForm
+
 
 def base_view(request):
     return render(request, 'base.html')
@@ -123,3 +127,33 @@ def tag_view(request, tag):
         'tags' : tags_list,
         'tag' : tag
     })
+
+def logout(request):
+    return redirect(reverse('index'))
+
+def login1(request):
+    if request.PoST:
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cdata = form.clean_data
+            user = auth.authenticate(
+                username = cdata['username'],
+                password = cdata['password'],
+            )
+            if user is not None:
+                auth.login1(request, user)
+    else:
+        form = LoginForm()
+    return render(request, 'login1.html', {
+        'form' : form
+    })
+# dgango-widget-twix
+#@login_required (login_url )
+#def ask1(request):
+#    if request.POST:
+#        form = QuestionForm(request.user, data = request.POST)
+#        if form.is_valid():
+#            question = form.save()
+#            return redirect(
+#                reverse('question', kwargs=[pk: question.pk])
+#            )

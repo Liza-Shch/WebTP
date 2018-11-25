@@ -1,0 +1,31 @@
+<{% load widget_twiks %}
+
+    <form method = "POST" novalidate>
+    {% csrf_token %}
+
+    <!--для hiddenFields тоже делаем проверки-->
+    <!--скрытые поля моут сохранять место ге пользователь был когда решил нажать login logout чтобы редирект был в то же место-->
+    {% for field in form.visible_fields %}
+    <div class = "form-group">
+        {{ field.label_tag }}
+        {% if field.errors %}
+            {render_field field class="form-control is-invalid"}
+            {for error in field.errors }
+                <div class = "invalid-feedback">
+                    {{error}}
+                </div>
+            {endfor}
+        {else}
+        {render_field field class=}
+        {{ field }}
+        <input type = "email" class="form-control" id="ex">
+        {% if field.help_text %}
+            <small id="emailHelp" class="form-text text-muted">{{field.help_text}}</small>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <button type = "submit" class="btn btn-primary">
+        Login
+    </button>
+</form>

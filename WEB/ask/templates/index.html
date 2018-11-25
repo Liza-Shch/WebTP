@@ -1,9 +1,44 @@
-{% extends "paginator.html" %}
+{% extends "base.html" %}
 
 {% load static %}
-{% block typetitle %}
-    <div class="row">
-        <a style="color: black" href="{% url 'index' %}"><h2>New Questions</h2></a>
-        <a style="margin-left:5%; color: black" href="{% url 'hot' %}"><h2>Hot questions</h2></a>
+{% block content %}
+    {% block question %}{% endblock %}
+    {% block objectlist %}
+    <div class="container" style="margin-top: 3%;">
+        {% block typetitle %}
+        <div class="row">
+            <a style="color: black" href="{% url 'index' %}"><h2>New Questions</h2></a>
+            <a style="margin-left:5%; color: black" href="{% url 'hot' %}"><h2>Hot questions</h2></a>
+        </div>
+        {% endblock %}
+        {% for object in objects %}
+            <div class="row" style="border: 2px solid black; margin-top:2%; height: 25vh;">
+                <div class="col-1 mt-3">
+                    <div class="row"><img src="{% static "img/House.png" %}" style="width: 80%; height: 80%; margin: auto" alt="Avatar"></div>
+                    {% include "like.html" %}
+                </div>
+                <div class="col-10 pr-0">                  
+                    <a class="btn btn-link pl-0" href="{% url 'question' object.id %}"><h2>{{ object.title }}</h2></a>
+                    <div class="mytext">
+                        {{ object.text }}
+                    </div>
+                    <div class="row">
+                        {% block objectproperties%}
+                        <div class="col-3 pl-0"><a class="btn btn-link" href="{% url 'question' object.id %}">answers(3)</a></div>
+                        <div class="col-9">Tags: 
+                            {% for tag in tags %}
+                            <a class="btn btn-link pr-0" href="{% url 'tag' tag %}">{{ tag }}</a>
+                            {% endfor %}
+                        </div>
+                        {% endblock %}                   
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        {% include "paginator.html" with objects=objects %}
+        <div class="row" style="height: 5vh"></div>
     </div>
+    {% endblock %}
+    {% block answer%}{% endblock %}
 {% endblock %}
