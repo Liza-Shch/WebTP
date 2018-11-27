@@ -7,12 +7,12 @@
     <div class="row">
         <div class="col-1 mt-3">
             <div class="row"><img src="{% static "img/House.png" %}" style="position:inherit; width:100%; height:100%" alt="Avatar"></div>
-            {% include "like.html" %}
+            {% include "like.html" with rating=question.votes.sum_rating %}
         </div>
         <div class="col-11">                  
             <h2>{{ question.title }}</h2>
             <div class="text" style="word-wrap:break-word">
-                {{ question.text }} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaak
+                {{ question.text }}
             </div>
             <div class="row mt-2">
                 <div class="col">Tags: 

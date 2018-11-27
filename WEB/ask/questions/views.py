@@ -3,6 +3,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 #from questions.forms import LoginForm, QuestionForm
+from questions import models
 
 
 def base_view(request):
@@ -15,41 +16,15 @@ def paginate(objects_list, request):
     return objects_page
 
 def index_view(request):
-    questions_list = []
-    for i in range(1,30):
-        questions_list.append({
-            "title": "title " + str(i),
-            "id": i,
-            "text": "text" + str(i)
-        })
-    tags_list = []
-    for i in range(1, 4):
-        tags_list.append(
-            "tag" + str(i)
-        )
+    questions_list = models.Question.objects.new_questions()
     questions = paginate(questions_list, request)
     return render(request, 'index.html', {
-        'objects': questions,
-        'tags' : tags_list
+        'objects': questions
     })
 
 def question_view(request, question_id):
-    questions = []
-    for i in range(1,30):
-        questions.append({
-            "title": "title " + str(i),
-            "id": i,
-            "text": "text" + str(i)
-    })
-    answers_list = []
-    for i in range(1, 30):
-        answers_list.append({
-            "text" : "answer" + str(i),
-            "id" : i,
-            "text" : "answer" + str(i)
-        })
-    question = questions[question_id - 1]
-    answers = paginate(answers_list, request)
+    question = models.Question.objects.get(pk=question_id)
+    answers = paginate(question.answers(), request)
     return render(request, 'question.html', {
         'question' : question,
         'objects' : answers
@@ -90,22 +65,10 @@ def settings_view(request):
     })
 
 def hot_view(request):
-    questions_list = []
-    for i in range(1,30):
-        questions_list.append({
-            "title": "Hottitle " + str(i),
-            "id": i,
-            "text": "text" + str(i)
-        })
-    tags_list = []
-    for i in range(1, 4):
-        tags_list.append(
-            "tag" + str(i)
-        )
+    question_list = models.Question.objects.hot_questions()
     questions = paginate(questions_list, request)
     return render(request, 'hot.html', {
-        'objects': questions,
-        'tags' : tags_list
+        'objects': questions
     })
 
 def tag_view(request, tag):
