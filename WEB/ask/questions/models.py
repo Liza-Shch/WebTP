@@ -8,7 +8,7 @@ from questions.managers import LikeDislikeManager, QuestionManager
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(verbose_name='Avatar')
-    nickname = models.CharField(max_length=50, verbose_name='Nickname')
+    nickname = models.CharField(max_length=100, verbose_name='Nickname')
 
     class Meta:
         verbose_name='Profile'
@@ -21,6 +21,7 @@ class Question(models.Model):
     is_published = models.BooleanField(verbose_name='Is published')
     author = models.ForeignKey('Profile', on_delete=models.CASCADE)
     votes = GenericRelation('Like', related_query_name='questions')
+    rating = models.IntegerField(default=0, verbose_name='Rating')
     objects = QuestionManager()
 
     class Meta:
@@ -37,8 +38,10 @@ class Answer(models.Model):
     text = models.TextField(verbose_name='Text')
     correct = models.BooleanField(verbose_name='Correct')
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
+    date_published = models.DateTimeField(verbose_name='Date published')
     author = models.ForeignKey('Profile', on_delete=models.CASCADE)
     votes = GenericRelation('Like', related_query_name='answers')
+    rating = models.IntegerField(default=0, verbose_name='Rating')
     class Meta:
         verbose_name='Answer'
         verbose_name_plural='Answers'
@@ -65,10 +68,13 @@ class Like(models.Model):
         verbose_name_plural='Ratings'
 
 class Tag(models.Model):
-    tag = models.CharField(max_length=50, verbose_name='Tag')
+    tag = models.CharField(max_length=100, verbose_name='Tag')
     question = models.ManyToManyField('Question', related_query_name='tags')
 
     class Meta:
         verbose_name='Tag'
         verbose_name_plural='Tags'
+
+    def questions(self):
+        return self.question.all()
 

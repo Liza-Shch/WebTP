@@ -1,16 +1,18 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-#from questions.forms import LoginForm, QuestionForm
+from questions.forms import *
 from questions import models
 
 
 def base_view(request):
-    return render(request, 'base.html')
+    return render(request, 'base.html', {
+        'user': request.user,
+    })
 
 def paginate(objects_list, request):
-    paginator = Paginator(objects_list, 5)
+    paginator = Paginator(objects_list, 30)
     page = request.GET.get('page')
     objects_page = paginator.get_page(page)
     return objects_page
@@ -22,8 +24,15 @@ def index_view(request):
         'objects': questions
     })
 
+def hot_view(request):
+    questions_list = models.Question.objects.hot_questions()
+    questions = paginate(questions_list, request)
+    return render(request, 'hot.html', {
+        'objects': questions
+    })
+
 def question_view(request, question_id):
-    question = models.Question.objects.get(pk=question_id)
+    question = get_object_or_404(models.Question.objects, pk=question_id)
     answers = paginate(question.answers(), request)
     return render(request, 'question.html', {
         'question' : question,
@@ -33,83 +42,69 @@ def question_view(request, question_id):
 def ask_view(request):
     return render(request, 'ask.html')
 
-def login_view(request):
-    form_items = [
-        {"label": "Login", "type_item": "text"},
-        {"label": "Password", "type_item": "password"}
-    ]
-    return render(request, 'login.html', {
-        'form_items' : form_items
-    })
-
-def signup_view(request):
-    form_items = [
-        {"label": "Login", "type_item": "text"},
-        {"label": "Email", "type_item": "email"}, 
-        {"label": "Nickname", "type_item": "text"},
-        {"label": "Password", "type_item": "password"},
-        {"label": "Repeat password", "type_item": "password"}
-    ]
-    return render(request, 'signup.html', {
-        'form_items' : form_items
-    })
-
-def settings_view(request):
-    form_items = [
-        {"label": "Login", "type_item": "text"},
-        {"label": "Email", "type_item": "email"}, 
-        {"label": "Nickname", "type_item": "text"}
-    ]
-    return render(request, 'settings.html', {
-        'form_items' : form_items
-    })
-
-def hot_view(request):
-    question_list = models.Question.objects.hot_questions()
-    questions = paginate(questions_list, request)
-    return render(request, 'hot.html', {
-        'objects': questions
-    })
-
-def tag_view(request, tag):
-    questions_list = []
-    for i in range(1,30):
-        questions_list.append({
-            "title": "title " + str(i),
-            "id": i,
-            "text": tag
-    })
-    tags_list = []
-    for i in range(1, 4):
-        tags_list.append(
-            "tag" + str(i)
-        )
-    questions = paginate(questions_list, request)
+def tag_view(request, tag_text):
+    tag = get_object_or_404(models.Tag.objects, tag=tag_text)
+    questions = paginate(tag.questions(), request)
     return render(request, 'tag.html', {
         'objects': questions,
-        'tags' : tags_list,
-        'tag' : tag
+        'tag' : tag_text
     })
 
 def logout(request):
-    return redirect(reverse('index'))
+    auth.logout(request)
 
-def login1(request):
-    if request.PoST:
+def login_view(request):
+    if request.POST:
+        error = ""
         form = LoginForm(request.POST)
         if form.is_valid():
-            cdata = form.clean_data
-            user = auth.authenticate(
-                username = cdata['username'],
-                password = cdata['password'],
-            )
+            cdata = form.cleaned_data
+            user = auth.authenticate(request, username=cdata['username'], password=cdata['password'])
             if user is not None:
-                auth.login1(request, user)
+                auth.login(request, user)
+                return redirect(request.GET.get('next') if request.GET.get('next') else 'index')
+        else:
+            error = "Uncorrect data"
     else:
         form = LoginForm()
     return render(request, 'login1.html', {
-        'form' : form
+        'form' : form,
+        'error' : error
     })
+
+def signup_view(request):
+    if request.POST:
+        error = ""
+        form = SignUp(request.POST)
+        if form.is_valid():
+            cdata = form.clean
+            user = User.create_user(username=cdata['username'], email=cdata['email'], password=cdata['password'])
+            auth.login(request, user)
+            profile = Profile.create_user(user=user, avatar=cdata['avatar'], nickname=cdata['nickname'])
+            redirect(reverse('index'))
+        else:
+            error = "Username or nickname already exists"
+    else:
+        form = SignUpForm()
+    return render(request, 'sighup1.html', {
+        'form' : form,
+        'error' : error
+    })
+
+@login_required
+def settings_view(request):
+    user = request.user
+    form = SettingsForm(instance=user)
+    if request.POST:
+        form = SettingsForm(instance=user, data=request.POST, files=request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('settings')
+    return render(request, 'settings.html', {
+        'form' : form,
+    })
+
+
 # dgango-widget-twix
 #@login_required (login_url )
 #def ask1(request):

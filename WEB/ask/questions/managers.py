@@ -29,5 +29,4 @@ class QuestionManager(models.Manager):
         return self.get_queryset().order_by('-date_published')
 
     def hot_questions(self):
-
-        return self.get_queryset().order_by(self.votes.sum_rating())
+        return self.get_queryset().order_by('-rating')

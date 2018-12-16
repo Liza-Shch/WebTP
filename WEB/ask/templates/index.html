@@ -15,7 +15,7 @@
             <div class="row" style="border: 2px solid black; margin-top:2%; height: 25vh;">
                 <div class="col-1 mt-3">
                     <div class="row"><img src="{{ object.author.avatar }}" style="width: 80%; height: 80%; margin: auto" alt="Avatar"></div>
-                    {% include "like.html" with rating=object.votes.sum_rating %}
+                    {% include "like.html" with rating=object.rating %}
                 </div>
                 <div class="col-10 pr-0">                  
                     <a class="btn btn-link pl-0" href="{% url 'question' object.id %}"><h2>{{ object.title }}</h2></a>
@@ -24,12 +24,12 @@
                     </div>
                     <div class="row">
                         {% block objectproperties%}
-                        <div class="col-3 pl-0"><a class="btn btn-link" href="{% url 'question' object.id %}">answers({{ object.answers.count }})</a></div>
-                        <div class="col-9">Tags: 
+                            <div class="col-3 pl-0"><a class="btn btn-link" href="{% url 'question' object.id %}">answers({{ object.answers.count }})</a></div>
+                            <div class="col-9">Tags: 
                             {% for tag in object.tags %}
-                            <a class="btn btn-link pr-0" href="{% url 'tag' tag %}">{{ tag.tag }}</a>
+                                <a class="btn btn-link pr-0" href="{% url 'tag' tag.tag %}">{{ tag.tag }}</a>
                             {% endfor %}
-                        </div>
+                            </div>
                         {% endblock %}                   
                     </div>
                 </div>

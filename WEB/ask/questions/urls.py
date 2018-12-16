@@ -11,6 +11,6 @@ urlpatterns = [
     path('signup', views.signup_view, name='signup'),
     path('settings', views.settings_view, name='settings'),
     path('hot', views.hot_view, name='hot'),
-    path('tag/<tag>', views.tag_view, name='tag'),
+    path('tag/<tag_text>', views.tag_view, name='tag'),
     path('logout', views.logout, name='logout')
 ]

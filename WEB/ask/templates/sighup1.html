@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block formtitle %}
+    <h2>SignUp</h2>
+{% endblock %}
+
+{% block additionall %}
+    <div class="col-3">
+        <label for="photo"><h5 class="text-right" style="width: 100%">Upload avatar</h5></label>
+    </div>
+    <div class="col-9">
+        <input type="file" class="filestyle">
+        <div class="invalid-feedback" style="display:block">
+            Please load a file
+        </div>
+    </div>                        
+    <button type = "submit" class="btn btn-primary">
+        SignUp
+    </button>
+{% endblock %}
