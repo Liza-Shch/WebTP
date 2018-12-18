@@ -42,14 +42,14 @@
                                     <div class="row" style="color: white">{{ user.username }}</div>
                                     <div class="row" style="width: 200px">
                                         <a class="btn btn-link" style="color: white" href="{% url 'settings' %}">Settings</a>
-                                        <a class="btn btn-link" style="color: white" href="{% url 'logout' %}">Log out</a>
+                                        <a class="btn btn-link" style="color: white" href="{% url 'logout' request.path %}">Log out</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     {% else %}
                         <div style="position:inherit; left:12%">
-                            <a class="btn btn-link" style="color: white" href="{% url 'login' %}">Log in</a>
+                            <a class="btn btn-link" style="color: white" href="{% url 'login' request.path %}">Log in</a>
                             <a class="btn btn-link" style="color: white" href="{% url 'signup' %}">Register</a>
                         </div>
                     {% endif %}

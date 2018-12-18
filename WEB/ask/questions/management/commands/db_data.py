@@ -14,13 +14,13 @@ VOTES_COUNT = 2000500
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        #self.create_users()
-        #self.create_profiles()
-        #self.create_questions()
-        #self.create_answers()
+        self.create_users()
+        self.create_profiles()
+        self.create_questions()
+        self.create_answers()
         self.create_tags()
         self.create_tags_questions_link()
-        #self.create_votes()
+        self.create_votes()
 
     def create_users(self):
         users = []
@@ -74,19 +74,19 @@ class Command(BaseCommand):
         Tag.objects.bulk_update(tags, update_fields=['question'])
 
     def create_votes(self):
-        #questions = Question.objects.filter(pk__lte=110500)
+        questions = Question.objects.filter(pk__lte=10500)
         users = Profile.objects.all()
-        answers = Answer.objects.filter(pk__lte=1011501)
+        answers = Answer.objects.filter(pk__lte=10500)
         i = 0
         votesCount = 0
         while (votesCount < 1000000):
             user = users[i]
             votes = []
-            #for question in questions:
-            #    like = random.choice([-1, 1])
-            #    votes.append(Like(author=user, votes=like, content_object=question))
-            #    votesCount += 1
-            #    question.rating += like
+            for question in questions:
+                like = random.choice([-1, 1])
+                votes.append(Like(author=user, votes=like, content_object=question))
+                votesCount += 1
+                question.rating += like
             for answer in answers:
                 like = random.choice([-1, 1])
                 votes.append(Like(author=user, votes=like, content_object=answer))
@@ -95,6 +95,8 @@ class Command(BaseCommand):
 
             Like.objects.bulk_create(votes)
             i += 1
+        for question in questions:
+            question.save(update_fields=['rating'])
         for answer in answers:
             answer.save(update_fields=['rating'])
         

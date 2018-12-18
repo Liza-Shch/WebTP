@@ -1,19 +1,7 @@
-{% extends "base.html" %}
-
 {% load static %}
 {% load widget_tweaks %}
 
-{% block content %}
-    <div class="container" style="margin-top: 3%;">
-        <div class="row">
-            {% block formtitle %}
-                <h2>{{ title }}</h2>
-            {% endblock %}
-        </div>
-        <div class="row">
-            <h4 id="erroe-msg" style="color:red">{{ error }}</h4>
-        </div>
-        {% block form %}
+{% block form %}
         <form method = "POST" novalidate>
             {% csrf_token %}
             {% for field in form.visible_fields %}
@@ -31,12 +19,10 @@
                         {% endif %}
                 </div>
             {% endfor %}
-            {% block additional %}
+            {% block additionall %}
             <button type = "submit" class="btn btn-primary">
                 Login
             </button>
             {% endblock %}
         </form>
-        {% endblock %}
-    </div>
 {% endblock %}

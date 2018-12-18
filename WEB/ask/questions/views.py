@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from questions.forms import *
 from questions import models
 
@@ -34,13 +35,24 @@ def hot_view(request):
 def question_view(request, question_id):
     question = get_object_or_404(models.Question.objects, pk=question_id)
     answers = paginate(question.answers(), request)
+    error = ""
+    if request.POST:
+        form = AnswerForm(author=request.user.profile, question=question, data = request.POST)
+        if form.is_valid():
+            answer = form.save()
+            return redirect(
+               reverse('question', args=[question.pk])
+            )
+        else:
+            error = "Incorrect data"
+    else:
+        form = AnswerForm(author=request.user.profile, question=question)
     return render(request, 'question.html', {
         'question' : question,
-        'objects' : answers
+        'objects' : answers,
+        'form' : form,
+        'error' : error
     })
-
-def ask_view(request):
-    return render(request, 'ask.html')
 
 def tag_view(request, tag_text):
     tag = get_object_or_404(models.Tag.objects, tag=tag_text)
@@ -50,68 +62,92 @@ def tag_view(request, tag_text):
         'tag' : tag_text
     })
 
-def logout(request):
+def logout(request, next):
     auth.logout(request)
+    return redirect(next)
 
-def login_view(request):
+def login_view(request, next):
+    error = ""
     if request.POST:
-        error = ""
         form = LoginForm(request.POST)
         if form.is_valid():
             cdata = form.cleaned_data
             user = auth.authenticate(request, username=cdata['username'], password=cdata['password'])
             if user is not None:
                 auth.login(request, user)
-                return redirect(request.GET.get('next') if request.GET.get('next') else 'index')
-        else:
-            error = "Uncorrect data"
+                return redirect(next)
+        error = "Incorrect data"
     else:
         form = LoginForm()
     return render(request, 'login1.html', {
+        'title' : "Login",
         'form' : form,
-        'error' : error
+        'error' : error,
     })
 
 def signup_view(request):
+    error = ""
     if request.POST:
-        error = ""
-        form = SignUp(request.POST)
-        if form.is_valid():
-            cdata = form.clean
-            user = User.create_user(username=cdata['username'], email=cdata['email'], password=cdata['password'])
+        user_form = SignUpForm(request.POST)
+        profile_form = ProfileForm(request.POST)
+        if user_form.is_valid() and profile_form.is_valid():
+            cdata_user = user_form.clean()
+            cdata_profile = profile_form.clean()  
+            user = User.objects.create_user(cdata_user['username'], cdata_user['email'], cdata_user['password'])
             auth.login(request, user)
-            profile = Profile.create_user(user=user, avatar=cdata['avatar'], nickname=cdata['nickname'])
+            Profile.objects.create(user=user, nickname=cdata_profile['nickname'])
             redirect(reverse('index'))
         else:
-            error = "Username or nickname already exists"
+            error = "Incorrect data"
     else:
-        form = SignUpForm()
-    return render(request, 'sighup1.html', {
-        'form' : form,
+        user_form = SignUpForm()
+        profile_form = ProfileForm(instance=User.objects.all()[0])
+    return render(request, 'signup1.html', {
+        'form' : user_form,
+        'profile_form' : profile_form,
+        'error' : error
+    })
+
+@login_required(redirect_field_name='/login')
+def settings_view(request):
+    error = ""
+    user = request.user
+    if request.POST:
+        user_form = UserForm(request.POST, instance=user)
+        profile_form = ProfileForm(request.POST, instance=user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('settings')
+        else:
+            error = "Incorrect data"
+    else:
+        user_form = UserForm(instance=user)
+        profile_form = ProfileForm(instance=user.profile)
+    return render(request, 'settings.html', {
+        'form' : user_form,
+        'profile_form' : profile_form,
         'error' : error
     })
 
 @login_required
-def settings_view(request):
-    user = request.user
-    form = SettingsForm(instance=user)
+def ask_view(request):
+    error = ""
     if request.POST:
-        form = SettingsForm(instance=user, data=request.POST, files=request.FILES)
+        form = QuestionForm(request.user.profile, data = request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('settings')
-    return render(request, 'settings.html', {
-        'form' : form,
+            try:
+                question = form.save()
+                return redirect(
+                    reverse('question', args=[question.pk])
+                )
+            except:
+                error = "Tag does not exist"
+        else:
+            error = "Incorrect data"
+    else:
+        form = QuestionForm(request.user.profile)
+    return render(request, 'ask.html', {
+        'user_form' : form,
+        'error' : error,
     })
-
-
-# dgango-widget-twix
-#@login_required (login_url )
-#def ask1(request):
-#    if request.POST:
-#        form = QuestionForm(request.user, data = request.POST)
-#        if form.is_valid():
-#            question = form.save()
-#            return redirect(
-#                reverse('question', kwargs=[pk: question.pk])
-#            )

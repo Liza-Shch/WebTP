@@ -27,7 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#login
 
+LOGIN_URL = '/login'
 # Application definition
 
 INSTALLED_APPS = [

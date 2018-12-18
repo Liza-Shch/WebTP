@@ -3,11 +3,22 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block formtitle %}
-    <h2>Settings</h2>
-{% endblock %}
-
-{% block additionall %}                       
+{% block additional %}
+    {% for field in profile_form.visible_fields %}
+    <div class = "form-group">
+        {{ field.label_tag }}
+        {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+            {% for error in field.errors %}
+                <div class = "invalid-feedback">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% else %}
+            {% render_field field class="form-control" %}
+            {% endif %}
+    </div>
+    {% endfor %}
     <button type = "submit" class="btn btn-primary">
         Save
     </button>

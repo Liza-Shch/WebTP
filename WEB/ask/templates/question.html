@@ -32,6 +32,10 @@
 </div>
 {% endblock %}
 
+{% block answer %}
+    {% include "form.html" with form=form error=error %}
+{% endblock %}
+
 {% block objectproperties %}
 <div class="col-11 pl-0 pr-0"></div>
 <div class="col-1 pl-0 pr-0">
@@ -39,15 +43,4 @@
         <span class="glyphicon glyphicon-ok"></span>
     </button>
 </div>
-{% endblock %}
-
-{% block answer %}
-<div class="form">
-    <div class="form-group">
-        <label for="answer"><h3>Your answer</h3></label>
-        <textarea class="form-control" rows="5" id="answer" placeholder="Enter your answer here..."></textarea>
-    </div>
-    <button type="submit" class="btn btn-success mt-3">Answer</button>
-</div>
-<div class="row" style="height: 10vh"></div>
 {% endblock %}
