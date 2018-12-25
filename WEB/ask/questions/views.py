@@ -46,7 +46,10 @@ def question_view(request, question_id):
         else:
             error = "Incorrect data"
     else:
+        #if request.user.is_authenticated:
         form = AnswerForm(author=request.user.profile, question=question)
+        #else:
+        #    form = None
     return render(request, 'question.html', {
         'question' : question,
         'objects' : answers,
@@ -103,6 +106,7 @@ def signup_view(request):
         user_form = SignUpForm()
         profile_form = ProfileForm(instance=User.objects.all()[0])
     return render(request, 'signup1.html', {
+        'title' : "SignUp",
         'form' : user_form,
         'profile_form' : profile_form,
         'error' : error
@@ -114,7 +118,7 @@ def settings_view(request):
     user = request.user
     if request.POST:
         user_form = UserForm(request.POST, instance=user)
-        profile_form = ProfileForm(request.POST, instance=user.profile)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=user.profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
@@ -148,6 +152,6 @@ def ask_view(request):
     else:
         form = QuestionForm(request.user.profile)
     return render(request, 'ask.html', {
-        'user_form' : form,
+        'form' : form,
         'error' : error,
     })

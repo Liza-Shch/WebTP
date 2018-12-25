@@ -12,6 +12,7 @@ class LoginForm(forms.Form):
         model = User
         fields = ['username', 'password']
 
+
 class SignUpForm(forms.ModelForm):
     username = forms.CharField(max_length=255, required=True)
     email = forms.EmailField(max_length=255, required=True)
@@ -30,6 +31,7 @@ class SignUpForm(forms.ModelForm):
             raise forms.ValidationError("password and confirm password does not match", code='invalid_password',)
         return cleaned_data
 
+
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
@@ -37,11 +39,11 @@ class UserForm(forms.ModelForm):
 
 class ProfileForm(forms.ModelForm):
     nickname = forms.CharField(max_length=100, required=False)
-    #avatar = forms.ImageField()
+    avatar = forms.ImageField()
 
     class Meta:
         model = Profile
-        fields = ['nickname']
+        fields = ['nickname', 'avatar']
 
 class QuestionForm(forms.ModelForm):
     title = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'placeholder' : "Enter a title..."}))

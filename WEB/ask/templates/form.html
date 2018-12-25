@@ -11,6 +11,31 @@
         <div class="row">
             <h4 id="erroe-msg" style="color:red">{{ error }}</h4>
         </div>
-        {% block form %}{% endblock %}
+        {% block form %}
+        <form method = "POST" novalidate>
+            {% csrf_token %}
+            {% for field in form.visible_fields %}
+                <div class = "form-group">
+                    {{ field.label_tag }}
+                    {% if field.errors %}
+                        {% render_field field class="form-control is-invalid" %}
+                        {% for error in field.errors %}
+                            <div class = "invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {% render_field field class="form-control" %}
+                        {% endif %}
+                </div>
+            {% endfor %}
+            {% block additional %}
+            <button type = "submit" class="btn btn-primary">
+                OK
+            </button>
+            {% endblock %}
+        </form>
+        {% endblock %}
     </div>
 {% endblock %}
+

@@ -14,7 +14,7 @@
             <h4 id="erroe-msg" style="color:red">{{ error }}</h4>
         </div>
         {% block form %}
-        <form method = "POST" novalidate>
+        <form method = "POST" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
             {% for field in form.visible_fields %}
                 <div class = "form-group">
